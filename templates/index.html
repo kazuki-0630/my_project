@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日程生成ツール</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 0 20px;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        form {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        input,
+        button {
+            padding: 8px;
+            margin: 6px 0;
+            font-size: 16px;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 16px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 40px auto;
+        }
+
+        .description {
+            color: #555;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .copy-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <h1>日程生成</h1>
+        <p class="description">開始日と終了日を選ぶと、調整さんに貼り付けやすい日程候補を生成します。</p>
+
+        <section class="card">
+            <form method="post" style="display:flex; gap:10px; align-items:center;">
+                開始日: <input type="date" name="start_date" value="{{ start_date }}" required>
+                終了日: <input type="date" name="end_date" value="{{ end_date }}" required>
+                <button type="submit">生成</button>
+            </form>
+        </section>
+
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if result %}
+        <section class="card">
+            <h2>結果</h2>
+
+            <div class="copy-area">
+                <button onclick="copyText()">コピー</button>
+                <span id="copy-message" style="margin-left:10px;"></span>
+            </div>
+
+            <pre id="result">{{ result }}</pre>
+        </section>
+        {% endif %}
+
+        <script>
+            function copyText() {
+                const text = document.getElementById("result").innerText;
+
+                navigator.clipboard.writeText(text)
+                    .then(() => {
+                        document.getElementById("copy-message").innerText = "コピーしました。";
+                    })
+                    .catch(() => {
+                        document.getElementById("copy-message").innerText = "コピーに失敗しました。";
+                    });
+            }
+        </script>
+    </main>
+</body>
+
+</html>
