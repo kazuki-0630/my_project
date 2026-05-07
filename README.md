@@ -67,3 +67,15 @@ https://my-project-78uy.onrender.com
 
 ## GitHub
 https://github.com/kazuki-0630/my_project
+
+## スクリーンショット
+
+### 入力画面
+![入力画面](images/top_image.png)
+
+### 生成結果
+![生成結果](images/result_image.png)
+
+
+### スマホ表示
+![スマホ表示](images/mobile.png)
