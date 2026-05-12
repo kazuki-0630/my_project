@@ -74,6 +74,21 @@
                 align-items: stretch;
             }
         }
+
+        .tool-grid {
+            display: flex;
+            gap: 20px;
+        }
+
+        .tool-grid .card {
+            flex: 1;
+        }
+
+        @media (max-width: 600px) {
+            .tool-grid {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 
@@ -82,13 +97,25 @@
         <h1>日程生成</h1>
         <p class="description">開始日と終了日を選ぶと、調整さんに貼り付けやすい日程候補を生成します。</p>
 
-        <section class="card">
-            <form method="post" style="display:flex; gap:10px; align-items:center;">
-                開始日: <input type="date" name="start_date" value="{{ start_date }}" required>
-                終了日: <input type="date" name="end_date" value="{{ end_date }}" required>
-                <button type="submit">生成</button>
-            </form>
-        </section>
+        <div class="tool-grid">
+            <section class="card">
+                <h2>日程生成</h2>
+                <form method="post">
+                    開始日: <input type="date" name="start_date" value="{{ start_date }}" required>
+                    終了日: <input type="date" name="end_date" value="{{ end_date }}" required>
+                    <button type="submit">生成</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2>CSV集計</h2>
+                <form method="post" enctype="multipart/form-data">
+                    CSVファイル: <input type="file" name="csv_file" accept=".csv">
+                    最低参加人数: <input type="number" name="min_count" value="3" min="1">
+                    <button type="submit">集計</button>
+                </form>
+            </section>
+        </div>
 
         {% if error %}
         <p class="error">{{ error }}</p>
