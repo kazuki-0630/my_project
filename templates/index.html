@@ -144,7 +144,10 @@
             <h2>日程生成結果</h2>
 
             <div class="copy-area">
-                <button onclick="copyText('schedule-result')">コピー</button>
+                <button onclick="copyText('schedule-result', 'schedule-copy-message')">
+                    コピー
+                </button>
+                <span id="schedule-copy-message"></span>
             </div>
 
             <pre id="schedule-result">{{ schedule_result }}</pre>
@@ -156,7 +159,11 @@
             <h2>CSV集計結果</h2>
 
             <div class="copy-area">
-                <button onclick="copyText('csv-result')">コピー</button>
+                <button onclick="copyText('csv-result', 'csv-copy-message')">
+                    コピー
+                </button>
+
+                <span id="csv-copy-message"></span>
             </div>
 
             <pre id="csv-result">{{ csv_result }}</pre>
@@ -164,15 +171,15 @@
         {% endif %}
 
         <script>
-            function copyText(id) {
-                const text = document.getElementById(id).innerText;
+            function copyText(resultId, messageId) {
+                const text = document.getElementById(resultId).innerText;
 
                 navigator.clipboard.writeText(text)
                     .then(() => {
-                        alert("コピーしました。");
+                        document.getElementById(messageId).innerText = "コピーしました。";
                     })
                     .catch(() => {
-                        alert("コピーに失敗しました。");
+                        document.getElementById(messageId).innerText = "コピーに失敗しました。";
                     });
             }
         </script>
