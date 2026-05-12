@@ -16,9 +16,16 @@
 
         form {
             display: flex;
+            flex-direction: column;
             gap: 12px;
-            align-items: center;
+            align-items: stretch;
             margin-bottom: 24px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         input,
@@ -101,8 +108,16 @@
             <section class="card">
                 <h2>日程生成</h2>
                 <form method="post">
-                    開始日: <input type="date" name="start_date" value="{{ start_date }}" required>
-                    終了日: <input type="date" name="end_date" value="{{ end_date }}" required>
+                    <div class="form-row">
+                        <label>開始日:</label>
+                        <input type="date" name="start_date" value="{{ start_date }}" required>
+                    </div>
+
+                    <div class="form-row">
+                        <label>終了日:</label>
+                        <input type="date" name="end_date" value="{{ end_date }}" required>
+                    </div>
+
                     <button type="submit">生成</button>
                 </form>
             </section>
@@ -110,7 +125,10 @@
             <section class="card">
                 <h2>CSV集計</h2>
                 <form method="post" enctype="multipart/form-data">
-                    CSVファイル: <input type="file" name="csv_file" accept=".csv">
+                    <div class="form-row">
+                        <label>CSVファイル:</label>
+                        <input type="file" name="csv_file" accept=".csv">
+                    </div>
                     最低参加人数: <input type="number" name="min_count" value="3" min="1">
                     <button type="submit">集計</button>
                 </form>
