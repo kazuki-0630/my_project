@@ -139,29 +139,40 @@
         <p class="error">{{ error }}</p>
         {% endif %}
 
-        {% if result %}
+        {% if schedule_result %}
         <section class="card">
-            <h2>結果</h2>
+            <h2>日程生成結果</h2>
 
             <div class="copy-area">
-                <button onclick="copyText()">コピー</button>
-                <span id="copy-message" style="margin-left:10px;"></span>
+                <button onclick="copyText('schedule-result')">コピー</button>
             </div>
 
-            <pre id="result">{{ result }}</pre>
+            <pre id="schedule-result">{{ schedule_result }}</pre>
+        </section>
+        {% endif %}
+
+        {% if csv_result %}
+        <section class="card">
+            <h2>CSV集計結果</h2>
+
+            <div class="copy-area">
+                <button onclick="copyText('csv-result')">コピー</button>
+            </div>
+
+            <pre id="csv-result">{{ csv_result }}</pre>
         </section>
         {% endif %}
 
         <script>
-            function copyText() {
-                const text = document.getElementById("result").innerText;
+            function copyText(id) {
+                const text = document.getElementById(id).innerText;
 
                 navigator.clipboard.writeText(text)
                     .then(() => {
-                        document.getElementById("copy-message").innerText = "コピーしました。";
+                        alert("コピーしました。");
                     })
                     .catch(() => {
-                        document.getElementById("copy-message").innerText = "コピーに失敗しました。";
+                        alert("コピーに失敗しました。");
                     });
             }
         </script>

@@ -12,7 +12,8 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    result = ""
+    schedule_result = ""
+    csv_result = ""
     error = ""
     start_date_str = ""
     end_date_str = ""
@@ -30,7 +31,7 @@ def index():
                     error = "開始日は終了日より前にしてください。"
                 else:
                     schedule = generate_schedule(start_date, end_date)
-                    result = "\n".join(schedule)
+                    schedule_result = "\n".join(schedule)
 
             except ValueError:
                 error = "入力が正しくありません"
@@ -44,11 +45,12 @@ def index():
                 min_count = int(request.form["min_count"])
                 rows = load_chouseisan_csv(csv_file)
                 results = analyze_schedule(rows, min_count)
-                result = "\n".join(merge_time_slots(results))
+                csv_result = "\n".join(merge_time_slots(results))
 
     return render_template(
         "index.html",
-        result=result,
+        schedule_result=schedule_result,
+        csv_result=csv_result,
         error=error,
         start_date=start_date_str,
         end_date=end_date_str,
