@@ -75,13 +75,6 @@
             margin-bottom: 10px;
         }
 
-        @media (max-width: 600px) {
-            form {
-                flex-direction: column;
-                align-items: stretch;
-            }
-        }
-
         .tool-grid {
             display: flex;
             gap: 20px;
@@ -92,8 +85,17 @@
         }
 
         @media (max-width: 600px) {
+            form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
             .tool-grid {
                 flex-direction: column;
+            }
+
+            h1 {
+                font-size: 40px;
             }
         }
     </style>
