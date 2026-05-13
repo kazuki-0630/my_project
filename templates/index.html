@@ -101,8 +101,8 @@
 
 <body>
     <main class="container">
-        <h1>日程生成</h1>
-        <p class="description">開始日と終了日を選ぶと、調整さんに貼り付けやすい日程候補を生成します。</p>
+        <h1>日程調整サポートツール</h1>
+        <p class="description">調整さん用の日程候補生成や、CSV集計を行えるツールです。</p>
 
         <div class="tool-grid">
             <section class="card">
@@ -120,6 +120,10 @@
 
                     <button type="submit">生成</button>
                 </form>
+
+                {% if schedule_error %}
+                <p class="error">{{ schedule_error }}</p>
+                {% endif %}
             </section>
 
             <section class="card">
@@ -129,19 +133,19 @@
                         <label>CSVファイル:</label>
                         <input type="file" name="csv_file" accept=".csv">
                     </div>
-                    最低参加人数: <input type="number" name="min_count" value="3" min="1">
+                    最低参加人数: <input type="number" name="min_count" value="{{ min_count }}" min="1">
                     <button type="submit">集計</button>
                 </form>
+
+                {% if csv_error %}
+                <p class="error">{{ csv_error }}</p>
+                {% endif %}
             </section>
         </div>
 
-        {% if error %}
-        <p class="error">{{ error }}</p>
-        {% endif %}
-
         {% if schedule_result %}
         <section class="card">
-            <h2>日程生成結果</h2>
+            <h2>生成結果</h2>
 
             <div class="copy-area">
                 <button onclick="copyText('schedule-result', 'schedule-copy-message')">
@@ -156,7 +160,7 @@
 
         {% if csv_result %}
         <section class="card">
-            <h2>CSV集計結果</h2>
+            <h2>集計結果</h2>
 
             <div class="copy-area">
                 <button onclick="copyText('csv-result', 'csv-copy-message')">
@@ -177,9 +181,17 @@
                 navigator.clipboard.writeText(text)
                     .then(() => {
                         document.getElementById(messageId).innerText = "コピーしました。";
+
+                        setTimeout(() => {
+                            document.getElementById(messageId).innerText = "";
+                        }, 2000);
                     })
                     .catch(() => {
                         document.getElementById(messageId).innerText = "コピーに失敗しました。";
+
+                        setTimeout(() => {
+                            document.getElementById(messageId).innerText = "";
+                        }, 2000);
                     });
             }
         </script>

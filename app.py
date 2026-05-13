@@ -14,9 +14,11 @@ app = Flask(__name__)
 def index():
     schedule_result = ""
     csv_result = ""
-    error = ""
+    schedule_error = ""
+    csv_error = ""
     start_date_str = ""
     end_date_str = ""
+    min_count_str = "6"
 
     if request.method == "POST":
         if "start_date" in request.form:
@@ -28,32 +30,43 @@ def index():
                 end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
 
                 if start_date > end_date:
-                    error = "開始日は終了日より前にしてください。"
+                    schedule_error = "開始日は終了日より前にしてください。"
                 else:
                     schedule = generate_schedule(start_date, end_date)
                     schedule_result = "\n".join(schedule)
 
             except ValueError:
-                error = "入力が正しくありません"
+                schedule_error = "入力が正しくありません"
 
         elif "csv_file" in request.files:
             csv_file = request.files["csv_file"]
 
             if csv_file.filename == "":
-                error = "CSVファイルを選択してください。"
+                csv_error = "CSVファイルを選択してください。"
+
             else:
-                min_count = int(request.form["min_count"])
-                rows = load_chouseisan_csv(csv_file)
-                results = analyze_schedule(rows, min_count)
-                csv_result = "\n".join(merge_time_slots(results))
+                try:
+                    min_count_str = request.form["min_count"]
+                    min_count = int(min_count_str)
+                    rows = load_chouseisan_csv(csv_file)
+                    results = analyze_schedule(rows, min_count)
+                    csv_result = "\n".join(merge_time_slots(results))
+
+                    if csv_result == "":
+                        csv_error = "条件に合う日程はありませんでした。"
+
+                except Exception:
+                    csv_error = "CSVの形式が正しくありません。"
 
     return render_template(
         "index.html",
         schedule_result=schedule_result,
         csv_result=csv_result,
-        error=error,
+        schedule_error=schedule_error,
+        csv_error=csv_error,
         start_date=start_date_str,
         end_date=end_date_str,
+        min_count=min_count_str,
     )
 
 
