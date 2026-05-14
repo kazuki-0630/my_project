@@ -1,29 +1,31 @@
-import sys
 import csv
 import io
-from datetime import datetime, timedelta
+from datetime import timedelta
+
+TIME_SLOTS = [
+    "10-12",
+    "12-14",
+    "14-16",
+    "16-18",
+    "18-20",
+    "20-22",
+]
+
+WEEKDAYS = ["月", "火", "水", "木", "金", "土", "日"]
 
 
-def generate_schedule(start_date, end_date):
+def generate_schedule(
+    start_date,
+    end_date,
+):
     results = []
-
-    time_slots = [
-        "10-12",
-        "12-14",
-        "14-16",
-        "16-18",
-        "18-20",
-        "20-22",
-    ]
-
-    weekdays = ["月", "火", "水", "木", "金", "土", "日"]
 
     current = start_date
 
     while current <= end_date:
-        for slot in time_slots:
+        for slot in TIME_SLOTS:
             date_str = f"{current.month}/{current.day}"
-            weekday_str = weekdays[current.weekday()]
+            weekday_str = WEEKDAYS[current.weekday()]
 
             results.append(f"{date_str}({weekday_str}) {slot}")
 
@@ -36,7 +38,7 @@ def load_chouseisan_csv(file):
     text = file.read().decode("cp932")
     csv_file = io.StringIO(text)
 
-    # 最初の2行を飛ばす
+    # 調整さんCSVの説明行を読み飛ばす
     next(csv_file)
     next(csv_file)
 
@@ -74,8 +76,29 @@ def analyze_schedule(rows, min_circle_count):
     return results
 
 
+def format_merged_slots(merged):
+    # マージ済みの日程データを表示用テキストに変換する
+    formatted_results = []
+
+    for slot in merged:
+        triangle_text = " ".join(slot["triangle_members"])
+        cross_text = " ".join(slot["cross_members"])
+
+        text = f"{slot['date']} {slot['start']}-{slot['end']}"
+
+        if triangle_text:
+            text += f" △: {triangle_text}"
+
+        if cross_text:
+            text += f" ×: {cross_text}"
+
+        formatted_results.append(text)
+
+    return formatted_results
+
+
 def merge_time_slots(results):
-    # 連続している時間帯をまとめる
+    # 同じ参加メンバー状態の連続時間帯を結合する
     slots = []
 
     for result in results:
@@ -99,6 +122,7 @@ def merge_time_slots(results):
     current = slots[0]
 
     for next_slot in slots[1:]:
+        # 日付・時間帯・参加状況が連続している場合は結合
         if (
             current["date"] == next_slot["date"]
             and current["end"] == next_slot["start"]
@@ -114,58 +138,4 @@ def merge_time_slots(results):
 
     merged.append(current)
 
-    formatted_results = []
-
-    for slot in merged:
-        triangle_text = " ".join(slot["triangle_members"])
-        cross_text = " ".join(slot["cross_members"])
-
-        text = f"{slot['date']} {slot['start']}-{slot['end']}"
-
-        if triangle_text:
-            text += f" △: {triangle_text}"
-
-        if cross_text:
-            text += f" ×: {cross_text}"
-
-        formatted_results.append(text)
-    return formatted_results
-
-
-def main():
-    args = sys.argv
-
-    if len(args) == 3:
-        start_date_str = args[1]
-        end_date_str = args[2]
-
-    elif len(args) == 1:
-        start_date_str = "2026-05-04"
-        end_date_str = "2026-05-06"
-
-    else:
-        print("使い方: python main.py 開始日 終了日")
-        return
-
-    try:
-        start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
-        end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
-
-        if start_date > end_date:
-            print("開始日は終了日より前にしてください。")
-            return
-
-    except ValueError:
-        print("日付は YYYY-MM-DD の形式で入力してください。")
-        return
-
-    with open("chouseisan.csv", "rb") as file:
-        rows = load_chouseisan_csv(file)
-
-    results = analyze_schedule(rows, 3)
-
-    print(merge_time_slots(results))
-
-
-if __name__ == "__main__":
-    main()
+    return format_merged_slots(merged)
